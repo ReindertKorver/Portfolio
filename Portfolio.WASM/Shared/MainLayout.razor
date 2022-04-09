@@ -1,0 +1,19 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Portfolio</PageTitle>
+
+<div class="h-screen bg-white text-black dark:bg-grey dark:text-white overflow-auto">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="w-screen flex justify-center">
+            <LoginDisplay />
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>

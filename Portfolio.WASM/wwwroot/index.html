@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Portfolio.WASM</title>
+    <base href="/" />
+    <!--<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />-->
+    <link href="/css/site.css" rel="stylesheet" />
+    <link href="Portfolio.WASM.styles.css" rel="stylesheet" />
+    <link href="/css/app.min.css" rel="stylesheet" />
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+</head>
+
+<body>
+
+    <div class="h-screen bg-white text-black dark:bg-grey dark:text-white overflow-auto">
+        <div>
+            <div id="app" class="h-screen bg-white text-black dark:bg-grey dark:text-white">
+                <div class="w-screen flex justify-center">
+                    <a class="text-6xl py-2" href="">Portfolio</a>
+                </div>
+                <div class="w-screen flex justify-center gap-x-4">
+                    Loading...
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
+</body>
+</html>
