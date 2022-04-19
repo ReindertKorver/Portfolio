@@ -1,0 +1,15 @@
+﻿
+<div class="relative flex px-2 items-center">
+    <div class="flex-grow border-t dark:border-white"></div>
+    @if (ChildContent != null)
+    {
+        <span class="flex-shrink mx-4 dark:text-white text-2xl">@ChildContent</span>
+        <div class="flex-grow border-t dark:border-white"></div>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

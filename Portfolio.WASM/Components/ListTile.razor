@@ -1,0 +1,28 @@
+﻿
+<div class="@(Grow?"w-full":"w-fill") flex justify-center p-2">
+    <div class="rounded-lg flex @(Grow?"w-full":"") max-w-full  dark:bg-grey2" >
+        @if (!HideLeading)
+        {
+            <div class="@(HideLeading?"":"rounded-l-lg") w-20 bg-contain bg-center bg-no-repeat mx-2" style="background-image: url(@(Url??"./images/logo.png"))"></div>
+        }
+        <a class="dark:bg-grey1 @(HideLeading?"rounded-lg":"rounded-r-lg") w-full border-0 border-l-0 p-4 pl-4 flex flex-col h-full overflow-hidden break-word" target="_blank" href="@Url">
+            <div class="text-2xl font-bold pb-1  flex-none">@Title</div>
+            <div class="text-l flex-auto">
+                @Description
+            </div>
+        </a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment Title { get; set; }
+    [Parameter]
+    public RenderFragment Description { get; set; }
+    [Parameter]
+    public string Url { get; set; }
+    [Parameter]
+    public bool HideLeading { get; set; } = false;
+    [Parameter]
+    public bool Grow { get; set; } = false;
+}
