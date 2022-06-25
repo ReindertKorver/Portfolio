@@ -3,8 +3,8 @@
   "short_name": "Portfolio Reindert",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1f6feb",
+  "background_color": "#181A1B",
+  "theme_color": "#181A1B",
   "prefer_related_applications": false,
   "icons": [
     {
