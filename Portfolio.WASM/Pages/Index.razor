@@ -1,26 +1,50 @@
 ﻿@page "/"
+@using Portfolio.WASM.Views
 
 <PageTitle>Home - Portfolio Reindert</PageTitle>
 
 <div>
 
-<div class="flex justify-center ">
+    <div class="flex justify-center ">
 
-    <div class="w-2/3 ">
-<Divider>About</Divider>
+        <div class="w-2/3 ">
+            <Divider>About</Divider>
+        </div>
     </div>
-</div>
-
-<About HideTitle=true></About>
-        <div class="flex justify-center ">
-    <div class="w-2/3 ">
-<Divider>Projects</Divider>
+    <div class="flex py-6 justify-center ">
+        <div class="lg:w-3/6 ">
+            <About HideTitle=true></About>
+        </div>
     </div>
+    <div class="flex justify-center ">
+        <div class="w-2/3 ">
+            <Divider>Education</Divider>
+        </div>
     </div>
-<div class="flex justify-center ">
-    <div class="md:w-3/6 ">
-        <Projects HideTitle=true></Projects>
+    <div class="flex justify-center ">
+        <div class="lg:w-3/6 md:w-2/3">
+            <Education HideTitle=true></Education>
+        </div>
     </div>
-</div>
+    <div class="flex justify-center ">
+        <div class="w-2/3 ">
+            <Divider>Work history</Divider>
+        </div>
+    </div>
+    <div class="flex justify-center ">
+        <div class="lg:w-3/6 md:w-2/3">
+            <Work HideTitle=true></Work>
+        </div>
+    </div>
+    <div class="flex justify-center ">
+        <div class="w-2/3 ">
+            <Divider>Projects</Divider>
+        </div>
+    </div>
+    <div class="flex justify-center ">
+        <div class="lg:w-3/6 md:w-2/3">
+            <Projects HideTitle=true></Projects>
+        </div>
+    </div>
 
 </div>

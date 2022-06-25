@@ -1,0 +1,31 @@
+﻿@if (!HideTitle)
+{
+    <h3 class="text-2xl font-bold pb-1">About</h3>
+
+}
+<Card ImagePosition="Utils.Position.Start" ImageUrl="./images/im.jpg">
+    <Header>
+        About this website
+    </Header>
+    <Body>
+        This is my personal website. I have been a software developer and a web designer since 2016.
+        <br />
+        This website shows my work history, skills, education and a way to contact me.
+        <br />
+        <br />
+        My current projects are listed on the
+        <a href="projects"><b>Projects</b></a> page.
+        <br />
+        <br />
+
+        Build using C#, Blazor WASM, Tailwind, and hosted in Azure.
+    </Body>
+    <Footer>
+        - Reindert
+    </Footer>
+</Card>
+
+@code {
+    [Parameter]
+    public bool HideTitle { get; set; } = false;
+}

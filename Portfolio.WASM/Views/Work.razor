@@ -1,0 +1,45 @@
+﻿@using Portfolio.Shared.Models
+@using Portfolio.Shared.Services
+@inject WorkHistoryService workHistoryService
+@if (!HideTitle)
+{
+    <h3 class="text-2xl font-bold pb-1">Workhistory</h3>
+}
+<div class="py-6">
+    @if (!Loading && History.Any())
+    {
+        @foreach (var edu in History.OrderByDescending(h=>h.StartDate))
+        {
+            <ListTile HideLeading=true Grow=true>
+                <Title>@edu.CompanyName</Title>
+                <Description>@edu.Title <br/>@edu.Description <br/>@edu.StartDate.Year @(edu.EndDate!=DateTime.MinValue?"- "+edu.EndDate.Year:"- ...")</Description>
+            </ListTile>
+        }
+
+    }
+    else if (!Loading && !History.Any())
+    {
+        <div class="flex justify-center">
+
+            <span class="text-center">Helaas niets om weer te geven<br /><i class="ti ti-mood-sad  text-2xl"></i></span>
+        </div>
+
+    }
+    <div class="flex justify-center">
+        <object class="w-5 h-5" type="image/svg+xml" data="/spinner1.svg" style="visibility:@(Loading?"visible":"hidden");"></object>
+    </div>
+
+</div>
+@code {
+    [Parameter]
+    public bool HideTitle { get; set; } = false;
+    private List<WorkHistory> History { get; set; } = new List<WorkHistory>();
+    private bool Loading { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        History = workHistoryService.GetWorkHistory();
+        Loading = false;
+
+    }
+}

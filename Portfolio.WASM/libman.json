@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "tabler-icons@1.35.0",
+      "destination": "wwwroot/tabler-icons/",
+      "files": [
+        "iconfont/tabler-icons.min.css"
+      ]
+    }
+  ]
+}

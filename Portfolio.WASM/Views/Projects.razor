@@ -1,0 +1,49 @@
+﻿@using System.Text.Json
+@using Portfolio.Shared
+@using System.Net.Http.Headers
+@using Portfolio.Shared.Models
+@using Portfolio.Shared.Services
+@inject ProjectService projectService;
+@if (!HideTitle)
+{
+    <h3 class="text-2xl font-bold pb-1">Projects</h3>
+}
+<div class="py-6">
+    @if (!Loading && ListProjects.Any())
+    {
+        @foreach (var project in ListProjects)
+        {
+            <ListTile HideLeading=true Grow=true Url="@project.Url">
+                <Title>@project.Name</Title>
+                <Description>@project.Description</Description>
+
+            </ListTile>
+        }
+
+    }
+    else if (!Loading && !ListProjects.Any())
+    {
+        <div class="flex justify-center">
+
+            <span class="text-center">Helaas niets om weer te geven<br /><i class="ti ti-mood-sad  text-2xl"></i></span>
+        </div>
+
+    }
+    <div class="flex justify-center">
+        <object class="w-5 h-5" type="image/svg+xml" data="/spinner1.svg" style="visibility:@(Loading?"visible":"hidden");"></object>
+    </div>
+
+</div>
+@code {
+    [Parameter]
+    public bool HideTitle { get; set; } = false;
+    private List<Project> ListProjects { get; set; } = new List<Project>();
+    private bool Loading { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        ListProjects = await projectService.GetProjects();
+        Loading = false;
+
+    }
+}

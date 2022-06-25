@@ -1,0 +1,40 @@
+﻿@if (!HideTitle)
+{
+    <h3 class="text-2xl font-bold pb-1">Contact</h3>
+
+}
+<Card ImagePosition="Utils.Position.Start" ImageUrl="./images/im.jpg">
+    <Header>
+        Contact
+    </Header>
+    <Body>
+        <div class="">
+
+            <div class="flex flex-col py-2">
+                <label class="mb-2 uppercase  font-bold text-lg text-grey-darkest">Emailaddress:</label>
+
+                <input class="dark:bg-grey2 py-2 px-4 rounded-lg focus:bg-grey3 focus:outline focus:outline-0 " type="email" placeholder="Type your emailaddress..." />
+            </div>
+            <div class="flex flex-col py-2">
+                <label class="mb-2 uppercase  font-bold text-lg text-grey-darkest">Subject:</label>
+
+                <input class="dark:bg-grey2 py-2 px-4 rounded-lg focus:bg-grey3 focus:outline focus:outline-0 " type="text" placeholder="Type your subject..." />
+            </div>
+            <div class="flex flex-col py-2">
+                <label class="uppercase pb-2 font-bold text-lg text-grey-darkest">Message:</label>
+                <textarea class="dark:bg-grey2 py-2 px-4 rounded-lg w-fill max-h-80 focus:bg-grey3 focus:outline focus:outline-0" placeholder="Type your message..."></textarea>
+            </div>
+        </div>
+    </Body>
+    <Footer>
+        <button @onclick="OnSend" class="dark:bg-grey2 py-2 px-4  rounded-lg hover:bg-grey3 active:bg-white/10 active:shadow-sm">Send</button>
+    </Footer>
+</Card>
+@code {
+    [Parameter]
+    public bool HideTitle { get; set; } = true;
+    public void OnSend()
+    {
+        
+    }
+}

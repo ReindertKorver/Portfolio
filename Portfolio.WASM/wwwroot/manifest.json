@@ -1,10 +1,10 @@
 {
-  "name": "Portfolio.WASM",
-  "short_name": "Portfolio.WASM",
+  "name": "Portfolio Reindert Korver",
+  "short_name": "Portfolio Reindert",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#03173d",
+  "theme_color": "#FF1F6FEB",
   "prefer_related_applications": false,
   "icons": [
     {
