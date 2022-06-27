@@ -13,21 +13,21 @@
             <div class="flex flex-col py-2">
                 <label class="mb-2 uppercase  font-bold text-lg text-grey-darkest">Emailaddress:</label>
 
-                <input class="dark:bg-grey2 py-2 px-4 rounded-lg focus:bg-grey3 focus:outline focus:outline-0 " type="email" placeholder="Type your emailaddress..." />
+                <input class="bg-white dark:bg-grey2 py-2 px-4 rounded-lg focus:dark:bg-grey3 focus:outline focus:outline-0 " type="email" placeholder="Type your emailaddress..." />
             </div>
             <div class="flex flex-col py-2">
                 <label class="mb-2 uppercase  font-bold text-lg text-grey-darkest">Subject:</label>
 
-                <input class="dark:bg-grey2 py-2 px-4 rounded-lg focus:bg-grey3 focus:outline focus:outline-0 " type="text" placeholder="Type your subject..." />
+                <input class="bg-white dark:bg-grey2 py-2 px-4 rounded-lg focus:dark:bg-grey3 focus:outline focus:outline-0 " type="text" placeholder="Type your subject..." />
             </div>
             <div class="flex flex-col py-2">
                 <label class="uppercase pb-2 font-bold text-lg text-grey-darkest">Message:</label>
-                <textarea class="dark:bg-grey2 py-2 px-4 rounded-lg w-fill max-h-80 focus:bg-grey3 focus:outline focus:outline-0" placeholder="Type your message..."></textarea>
+                <textarea class="bg-white text-black dark:bg-grey2 py-2 px-4 rounded-lg w-fill max-h-80 focus:dark:bg-grey3 focus:outline focus:outline-0" placeholder="Type your message..."></textarea>
             </div>
         </div>
     </Body>
     <Footer>
-        <button @onclick="OnSend" class="dark:bg-grey2 py-2 px-4  rounded-lg hover:bg-grey3 active:bg-white/10 active:shadow-sm">Send</button>
+        <button @onclick="OnSend" class="bg-white dark:bg-grey2 py-2 px-4  rounded-lg hover:bg-black/10 hover:dark:bg-grey3 active:dark:bg-white/10 active:bg-black/20 active:shadow-sm">Send</button>
     </Footer>
 </Card>
 @code {

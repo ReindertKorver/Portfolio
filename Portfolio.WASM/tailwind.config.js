@@ -1,5 +1,6 @@
 const colors = require('tailwindcss/colors');
 module.exports = {
+    darkMode: 'class',
     content: [
         './**/*.html',
         './**/*.razor',
@@ -9,7 +10,8 @@ module.exports = {
         extend: {
             colors: {
                 'white': '#FFFFFF',
-                'white1': '#f2f2f2',
+                'white1': '#f9f9f9',
+                'white2': '#f2f2f2',
                 'white2': '#e6e6e6',
                 'grey': '#181A1B',
                 'grey1': '#242627',

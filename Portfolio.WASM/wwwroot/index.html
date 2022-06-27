@@ -18,6 +18,23 @@
     <link href="manifest.json" rel="manifest" />
     <link rel="apple-touch-icon" sizes="512x512" href="/images/logo_small.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="/images/logo_smaller.png" />
+    <script>
+        function checkTheme() {
+            try {
+                if (localStorage.theme !== 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark')
+                    return true;
+                } else {
+                    document.documentElement.classList.remove('dark')
+                    return false;
+                }
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        checkTheme();
+    </script>
 </head>
 
 <body>
@@ -44,5 +61,6 @@
     <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 </body>
 </html>

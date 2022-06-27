@@ -1,11 +1,43 @@
-﻿<div class="w-screen flex justify-center">
-    <a class="text-6xl py-2" href="">Portfolio</a>
+﻿@inject IJSRuntime JS
+<div class="flex justify-center">
+    <div class="flex-col  lg:w-3/6">
+        <div class="flex justify-start">
+            <a class="text-6xl pl-2 pt-6 pb-2" href="">Portfolio</a>
+        </div>
+        <div class="flex justify-start pl-2 gap-x-4 flex-wrap">
+            <NavLink class="text-2xl" href="/">Home</NavLink>
+            <NavLink class="text-2xl" href="/Projects">Projects</NavLink>
+            <NavLink class="text-2xl" href="/Workhistory">Work</NavLink>
+            <NavLink class="text-2xl" href="/EducationHistory">Education</NavLink>
+            <NavLink class="text-2xl" href="/About">About</NavLink>
+            <NavLink class="text-2xl" href="/Contact">Contact</NavLink>
+            <div class="flex justify-center items-end">
+                <LoginDisplay />
+
+            </div>
+            <div class="flex justify-center items-end">
+                <a @onclick="ToggleTheme" href=""><i class="ti ti-@(dark?"sun":"moon") text-xl"></i></a>
+
+            </div>
+        </div>
+    </div>
+
 </div>
-<div class="w-screen flex justify-center gap-x-4">
-    <NavLink class="text-2xl" href="/">Home</NavLink>
-    <NavLink class="text-2xl" href="/Projects">Projects</NavLink>
-    <NavLink class="text-2xl" href="/Workhistory">Work</NavLink>
-    <NavLink class="text-2xl" href="/EducationHistory">Education</NavLink>
-    <NavLink class="text-2xl" href="/About">About</NavLink>
-    <NavLink class="text-2xl" href="/Contact">Contact</NavLink>
-</div>
+@code {
+    private bool dark = false;
+    protected override async Task OnInitializedAsync()
+    {
+
+        string theme = await JS.InvokeAsync<string>("localStorage.getItem", "theme");
+        if (theme != "dark" && theme != "light")
+            dark = await JS.InvokeAsync<bool>("checkTheme");
+        return;
+        dark = theme == "dark";
+    }
+    private async Task ToggleTheme()
+    {
+        dark=!dark;
+        await JS.InvokeVoidAsync("localStorage.setItem", "theme", dark?"dark":"light");
+        dark = await JS.InvokeAsync<bool>("checkTheme");
+    }
+}
