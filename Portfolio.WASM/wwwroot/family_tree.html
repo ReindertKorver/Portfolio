@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vier Eeuwen van het Geslacht Corver/Korver</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Georgia, "Times New Roman", serif;
+        background: #faf7f2;
+        color: #2c2c2c;
+        min-height: 100vh;
+      }
+
+      /* ── Header ─────────────────────────────────────────────── */
+      header {
+        background: #3b2a1a;
+        color: #f5e8d0;
+        padding: 1.5rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+      }
+
+      header h1 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        letter-spacing: 0.02em;
+      }
+      header p {
+        font-size: 0.85rem;
+        color: #c8b89a;
+        margin-top: 0.25rem;
+      }
+
+      /* ── Header nav ─────────────────────────────────────────── */
+      header nav {
+        margin-top: 0.75rem;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      header nav a {
+        font-size: 0.82rem;
+        font-family: Georgia, serif;
+        color: #f5e8d0;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+      header nav a:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+      header nav a.active {
+        background: #c4a97a;
+        border-color: #c4a97a;
+        color: #1a1209;
+        font-weight: bold;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      /* ── Search ──────────────────────────────────────────────── */
+      #search-wrap {
+        margin: 1rem 2rem;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      #search {
+        flex: 1;
+        min-width: 220px;
+        padding: 0.55rem 0.9rem;
+        font-size: 1rem;
+        font-family: inherit;
+        border: 1px solid #c4a97a;
+        border-radius: 6px;
+        background: #fff;
+        color: #2c2c2c;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      #search:focus {
+        border-color: #7a4e28;
+        box-shadow: 0 0 0 3px rgba(122, 78, 40, 0.15);
+      }
+
+      #search-results {
+        background: #fff;
+        border: 1px solid #c4a97a;
+        border-radius: 6px;
+        max-height: 260px;
+        overflow-y: auto;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 200;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      #search-wrap {
+        position: relative;
+      }
+
+      #search-results .sr-item {
+        padding: 0.5rem 0.9rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f0e8d8;
+      }
+      #search-results .sr-item:last-child {
+        border-bottom: none;
+      }
+      #search-results .sr-item:hover,
+      #search-results .sr-item:focus {
+        background: #f5ebe0;
+        outline: none;
+      }
+      #search-results .sr-item .sr-name {
+        font-weight: bold;
+        color: #3b2a1a;
+      }
+      #search-results .sr-item .sr-dates {
+        color: #7a6a55;
+        font-size: 0.8rem;
+        margin-left: 0.4rem;
+      }
+      #search-results .empty {
+        padding: 0.6rem 0.9rem;
+        color: #999;
+        font-size: 0.9rem;
+      }
+
+      /* ── Stats bar ───────────────────────────────────────────── */
+      #stats {
+        margin: 0 2rem 0.5rem;
+        font-size: 0.82rem;
+        color: #7a6a55;
+      }
+
+      /* ── Tree ────────────────────────────────────────────────── */
+      #tree-wrap {
+        padding: 0 2rem 3rem;
+      }
+
+      ul {
+        list-style: none;
+        padding-left: 1.6rem;
+        border-left: 2px solid #d9c9b0;
+        margin-top: 0.25rem;
+      }
+
+      li {
+        margin: 0.2rem 0;
+      }
+
+      details {
+        margin: 0.15rem 0;
+      }
+
+      details > summary {
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 5px;
+        user-select: none;
+        transition: background 0.15s;
+      }
+      /* hide default marker */
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+      details > summary::marker {
+        display: none;
+      }
+
+      /* expand triangle */
+      details > summary::before {
+        content: "▶";
+        font-size: 0.7rem;
+        color: #a07850;
+        transition: transform 0.2s;
+        min-width: 0.9rem;
+        text-align: center;
+      }
+      details[open] > summary::before {
+        transform: rotate(90deg);
+      }
+
+      details > summary:hover {
+        background: #f0e4d0;
+      }
+      details[open] > summary {
+        background: #e8d9c4;
+        font-weight: bold;
+      }
+
+      .person-name {
+        font-size: 0.95rem;
+        color: #1a1209;
+      }
+      .person-years {
+        font-size: 0.78rem;
+        color: #7a6a55;
+      }
+      .person-gen {
+        font-size: 0.7rem;
+        background: #c4a97a;
+        color: #fff;
+        border-radius: 3px;
+        padding: 0 0.35rem;
+        line-height: 1.4;
+      }
+
+      /* card inside details */
+      .person-card {
+        margin: 0.3rem 0 0.2rem 1.8rem;
+        padding: 0.5rem 0.75rem;
+        background: #fff8ef;
+        border: 1px solid #e0cdb0;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        color: #4a3a28;
+        line-height: 1.6;
+      }
+      .person-card .label {
+        font-weight: bold;
+        color: #7a4e28;
+      }
+
+      /* leaf nodes */
+      li.leaf {
+        padding: 0.2rem 0.6rem 0.2rem 1.3rem;
+        color: #9a8a75;
+        font-size: 0.87rem;
+        position: relative;
+      }
+      li.leaf::before {
+        content: "·";
+        position: absolute;
+        left: 0.5rem;
+        color: #c4a97a;
+      }
+
+      /* highlighted node from search */
+      .highlight > summary {
+        background: #ffe08a !important;
+      }
+
+      /* ── Collapse/Expand button ──────────────────────────────── */
+      #toggle-all {
+        padding: 0.45rem 1rem;
+        font-size: 0.88rem;
+        font-family: inherit;
+        background: #3b2a1a;
+        color: #f5e8d0;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+        flex-shrink: 0;
+      }
+      #toggle-all:hover {
+        background: #5a4030;
+      }
+
+      /* ── Scrollbar ───────────────────────────────────────────── */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f0e8d8;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c4a97a;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 id="title">Vier Eeuwen van het Geslacht Corver/Korver</h1>
+      <p id="subtitle"></p>
+      <nav>
+        <a href="family_tree.html" class="active">Weergave 1</a>
+        <a href="family_tree_other.html">Weergave 2</a>
+      </nav>
+    </header>
+
+    <div id="search-wrap">
+      <input
+        id="search"
+        type="search"
+        placeholder="Zoek op naam…"
+        autocomplete="off"
+      />
+      <div id="search-results" hidden></div>
+      <button id="toggle-all" data-state="expanded">Alles inklappen</button>
+    </div>
+
+    <p id="stats"></p>
+
+    <div id="tree-wrap">
+      <p style="color: #999; font-size: 0.9rem">Gegevens worden geladen…</p>
+    </div>
+
+    <script>
+      // ── Utility ─────────────────────────────────────────────────────────────
+      function years(node) {
+        const parts = [node.born, node.died].filter(Boolean);
+        return parts.length ? parts.join(" – ") : "";
+      }
+
+      // ── Build tree DOM ────────────────────────────────────────────────────────
+      function buildTree(node, container, depth) {
+        depth = depth || 0;
+
+        const details = document.createElement("details");
+        details.dataset.genId = node.genId || "";
+        // Open root + first two levels by default
+        if (depth < 2) details.open = true;
+
+        const summary = document.createElement("summary");
+
+        if (node.genId) {
+          const badge = document.createElement("span");
+          badge.className = "person-gen";
+          badge.textContent = node.genId;
+          summary.appendChild(badge);
+        }
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "person-name";
+        nameSpan.textContent = node.name;
+        summary.appendChild(nameSpan);
+
+        const y = years(node);
+        if (y) {
+          const ySpan = document.createElement("span");
+          ySpan.className = "person-years";
+          ySpan.textContent = "(" + y + ")";
+          summary.appendChild(ySpan);
+        }
+
+        details.appendChild(summary);
+
+        // Info card
+        const card = document.createElement("div");
+        card.className = "person-card";
+        let cardHtml = "";
+        if (node.born)
+          cardHtml += `<span class="label">Geb.:</span> ${node.born}<br>`;
+        if (node.died)
+          cardHtml += `<span class="label">Overl.:</span> ${node.died}<br>`;
+        if (node.spouses && node.spouses.length)
+          cardHtml += `<span class="label">Huwt:</span> ${node.spouses.join(", ")}<br>`;
+        if (node.notes)
+          cardHtml += `<span class="label">Noot:</span> ${node.notes}`;
+        if (cardHtml) {
+          card.innerHTML = cardHtml;
+          details.appendChild(card);
+        }
+
+        // Children
+        if (node.children && node.children.length) {
+          const ul = document.createElement("ul");
+          node.children.forEach((child) => {
+            const li = document.createElement("li");
+            if ((child.children && child.children.length) || child.genId) {
+              buildTree(child, li, depth + 1);
+            } else {
+              // leaf
+              li.className = "leaf";
+              const y2 = years(child);
+              li.textContent = child.name + (y2 ? "  (" + y2 + ")" : "");
+            }
+            ul.appendChild(li);
+          });
+          details.appendChild(ul);
+        }
+
+        container.appendChild(details);
+      }
+
+      // ── Full search index (tree walk, includes leaves) ──────────────────────
+      function buildFullIndex(node, parentGenId, result) {
+        result = result || [];
+        parentGenId = parentGenId || null;
+        result.push({
+          name: node.name,
+          born: node.born || null,
+          died: node.died || null,
+          genId: node.genId || null,
+          parentGenId: parentGenId,
+        });
+        (node.children || []).forEach(function (child) {
+          buildFullIndex(child, node.genId || parentGenId, result);
+        });
+        return result;
+      }
+
+      // ── Search ───────────────────────────────────────────────────────────────
+      function initSearch(index) {
+        const input = document.getElementById("search");
+        const box = document.getElementById("search-results");
+
+        input.addEventListener("input", () => {
+          const q = input.value.trim().toLowerCase();
+          box.innerHTML = "";
+          if (q.length < 2) {
+            box.hidden = true;
+            return;
+          }
+
+          const hits = index
+            .filter(
+              (p) =>
+                p.name.toLowerCase().includes(q) ||
+                (p.born && p.born.toLowerCase().includes(q)) ||
+                (p.died && p.died.toLowerCase().includes(q)),
+            )
+            .slice(0, 40);
+
+          if (!hits.length) {
+            box.innerHTML =
+              '<div class="empty">Geen resultaten gevonden.</div>';
+          } else {
+            hits.forEach((p) => {
+              const div = document.createElement("div");
+              div.className = "sr-item";
+              div.tabIndex = 0;
+              const navId = p.genId || p.parentGenId;
+              div.innerHTML =
+                `<span class="sr-name">${p.name}</span>` +
+                (p.genId
+                  ? ` <span class="sr-dates">[${p.genId}]</span>`
+                  : p.parentGenId
+                    ? ` <span class="sr-dates">↳ ${p.parentGenId}</span>`
+                    : "") +
+                (p.born || p.died
+                  ? ` <span class="sr-dates">${[p.born, p.died].filter(Boolean).join(" – ")}</span>`
+                  : "");
+              div.addEventListener("click", () => focusNode(navId, input, box));
+              div.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") focusNode(navId, input, box);
+              });
+              box.appendChild(div);
+            });
+          }
+          box.hidden = false;
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!document.getElementById("search-wrap").contains(e.target))
+            box.hidden = true;
+        });
+      }
+
+      function focusNode(genId, input, box) {
+        box.hidden = true;
+        if (!genId) return;
+
+        // Remove previous highlights
+        document
+          .querySelectorAll(".highlight")
+          .forEach((el) => el.classList.remove("highlight"));
+
+        // Find the details element
+        const target = document.querySelector(
+          `details[data-gen-id="${genId}"]`,
+        );
+        if (!target) return;
+
+        // Open all ancestors
+        let el = target.parentElement;
+        while (el) {
+          if (el.tagName === "DETAILS") el.open = true;
+          el = el.parentElement;
+        }
+        target.open = true;
+        target.classList.add("highlight");
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        input.value = "";
+      }
+
+      // ── Collapse / Expand all ─────────────────────────────────────────────────
+      function initToggleAll() {
+        const btn = document.getElementById("toggle-all");
+        btn.addEventListener("click", () => {
+          const expanding = btn.dataset.state === "collapsed";
+          document.querySelectorAll("#tree-wrap details").forEach((d) => {
+            d.open = expanding;
+          });
+          btn.dataset.state = expanding ? "expanded" : "collapsed";
+          btn.textContent = expanding ? "Alles inklappen" : "Alles uitklappen";
+        });
+      }
+
+      // ── Bootstrap ────────────────────────────────────────────────────────────
+      fetch("korver_family_tree_merged.json")
+        .then((r) => r.json())
+        .then((data) => {
+          // Header
+          document.getElementById("title").textContent = data.meta.title;
+          document.getElementById("subtitle").textContent =
+            "De mannelijke lijn Corver/Korver door veertien generaties";
+          document.title = data.meta.title;
+
+          // Stats
+          document.getElementById("stats").textContent =
+            `${data.meta.totalGenerations} generaties · ${data.meta.totalPersonsWithOwnEntry} personen met eigen sectie`;
+
+          // Tree
+          const wrap = document.getElementById("tree-wrap");
+          wrap.innerHTML = "";
+          buildTree(data.tree, wrap, 0);
+
+          // Search — use full tree index so leaves (no genId) are also findable
+          initSearch(buildFullIndex(data.tree));
+
+          // Collapse/expand all
+          initToggleAll();
+        })
+        .catch((err) => {
+          document.getElementById("tree-wrap").innerHTML =
+            `<p style="color:red">Fout bij laden: ${err.message}</p>`;
+        });
+    </script>
+  </body>
+</html>
