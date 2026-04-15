@@ -1,0 +1,6 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/family_tree.html","/family_tree_other.html","/korver_family_tree_merged.json", "/css/*", "/images/*"]
+  }
+}
