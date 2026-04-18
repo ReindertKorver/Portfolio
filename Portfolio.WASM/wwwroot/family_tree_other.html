@@ -86,27 +86,69 @@
         z-index: 50;
       }
 
+      #search-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
       #search-input {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.88rem;
+        padding: 0.55rem 0.9rem;
+        font-size: 1rem;
         font-family: inherit;
         border: 1px solid #c4a97a;
-        border-radius: 5px;
+        border-radius: 6px;
         background: #fff;
         color: #2c2c2c;
         outline: none;
-        width: 200px;
+        min-width: 220px;
         transition: border-color 0.2s;
       }
       #search-input:focus {
         border-color: #7a4e28;
-        box-shadow: 0 0 0 2px rgba(122, 78, 40, 0.15);
+        box-shadow: 0 0 0 3px rgba(122, 78, 40, 0.15);
       }
 
-      #search-count {
-        font-size: 0.78rem;
+      #search-results {
+        background: #fff;
+        border: 1px solid #c4a97a;
+        border-radius: 6px;
+        max-height: 260px;
+        overflow-y: auto;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        z-index: 200;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+      #search-results .sr-item {
+        padding: 0.5rem 0.9rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #f0e8d8;
+      }
+      #search-results .sr-item:last-child {
+        border-bottom: none;
+      }
+      #search-results .sr-item:hover,
+      #search-results .sr-item:focus {
+        background: #f5ebe0;
+        outline: none;
+      }
+      #search-results .sr-item .sr-name {
+        font-weight: bold;
+        color: #3b2a1a;
+      }
+      #search-results .sr-item .sr-dates {
         color: #7a6a55;
-        min-width: 90px;
+        font-size: 0.8rem;
+        margin-left: 0.4rem;
+      }
+      #search-results .empty {
+        padding: 0.6rem 0.9rem;
+        color: #999;
+        font-size: 0.9rem;
       }
 
       .ctrl-btn {
@@ -178,13 +220,15 @@
     </header>
 
     <div id="controls">
-      <input
-        id="search-input"
-        type="search"
-        placeholder="Zoek op naam…"
-        autocomplete="off"
-      />
-      <span id="search-count"></span>
+      <div id="search-wrap">
+        <input
+          id="search-input"
+          type="search"
+          placeholder="Zoek op naam…"
+          autocomplete="off"
+        />
+        <div id="search-results" hidden></div>
+      </div>
       <button id="btn-toggle-all" class="ctrl-btn">Alles inladen</button>
       <button id="btn-zoom-in" class="ctrl-btn zoom-btn" title="Zoom in">
         +
@@ -213,7 +257,7 @@
       const NODE_H_SIMPLE = 46; // name only
       const LEAF_W = 130;
       const LEAF_H = 36;
-      const H_SPACING = 200; // nodeSize x
+      const H_SPACING = 220; // nodeSize x
       const V_SPACING = 130; // nodeSize y (increased for taller nodes)
       const ANIM_MS = 400;
       const MAX_NAME_LEN = 22;
@@ -249,16 +293,20 @@
       }
 
       function isLeaf(d) {
-        // A leaf is a node with no genId
-        return !d.data.genId;
+        // A leaf is a node with no children (and no collapsed children)
+        return !d.children && !d._children;
       }
 
       function nodeW(d) {
-        return isLeaf(d) ? LEAF_W : NODE_W;
+        return NODE_W;
       }
       function nodeH(d) {
-        if (isLeaf(d)) return LEAF_H;
-        return yearsStr(d) ? NODE_H_FULL : NODE_H_SIMPLE;
+        const yr = yearsStr(d);
+        const hasExtra =
+          !!(d.data.spouses && d.data.spouses.length) || !!d.data.notes;
+        if (yr && hasExtra) return NODE_H_FULL + 18;
+        if (yr) return NODE_H_FULL;
+        return NODE_H_SIMPLE;
       }
 
       // ── D3 setup ─────────────────────────────────────────────────────────────
@@ -282,6 +330,7 @@
       let nodeIdCounter = 0;
       let allExpanded = false;
       let searchIndex = [];
+      let _highlightedNavId = null;
 
       // ── Collapse helpers ─────────────────────────────────────────────────────
       function collapse(d) {
@@ -315,28 +364,34 @@
         }
       }
 
+      // ── Assign navigation IDs to every node ─────────────────────────────────
+      let _autoNavCounter = 0;
+      function assignNavIds(node) {
+        node._navId = node.genId || "~" + ++_autoNavCounter;
+        (node.children || []).forEach(assignNavIds);
+      }
+
       // ── Build search index ────────────────────────────────────────────────────
       function buildIndex(node, ancestors) {
         ancestors = ancestors || [];
         searchIndex.push({
           name: node.name,
           genId: node.genId,
+          navId: node._navId,
           born: node.born,
           died: node.died,
           ancestors: [...ancestors],
         });
         const kids = node.children || node._children || [];
-        kids.forEach((c) =>
-          buildIndex(c, node.genId ? [...ancestors, node.genId] : ancestors),
-        );
+        kids.forEach((c) => buildIndex(c, [...ancestors, node._navId]));
       }
 
-      // ── Find a node by genId, traversing both children and _children ───────────
-      function findNodeByGenId(genId) {
+      // ── Find a node by navId, traversing both children and _children ──────────
+      function findNodeByGenId(navId) {
         let found = null;
         function walk(node) {
           if (found) return;
-          if (node.data.genId === genId) {
+          if (node.data._navId === navId) {
             found = node;
             return;
           }
@@ -347,11 +402,11 @@
         return found;
       }
 
-      // ── Expand the path from root down to the node with the given genId ────────
+      // ── Expand the path from root down to the node with the given navId ────────
       // Returns the target node if found, null otherwise.
-      function expandPathTo(genId) {
+      function expandPathTo(navId) {
         function walk(node) {
-          if (node.data.genId === genId) return node;
+          if (node.data._navId === navId) return node;
           const kids = (node.children || []).concat(node._children || []);
           for (const c of kids) {
             const hit = walk(c);
@@ -462,13 +517,26 @@
         nodeEnter.each(function (d) {
           const g = d3.select(this);
           const leaf = isLeaf(d);
-          const yr = leaf ? null : yearsStr(d);
+          const yr = yearsStr(d);
           const w = nodeW(d);
           const h = nodeH(d); // dynamic: taller when years present
           const hasKids = !!(d.children || d._children);
-          // Vertical text positions
-          const nameY = yr ? (d.data.genId ? -9 : -7) : d.data.genId ? 6 : 0;
-          const yearsY = yr ? (d.data.genId ? 11 : 9) : 0;
+
+          // Extra sub-line (spouses / notes) shown for ALL nodes
+          const extraParts = [];
+          if (d.data.spouses && d.data.spouses.length)
+            extraParts.push("Huwt: " + d.data.spouses.join(", "));
+          if (d.data.notes) extraParts.push(d.data.notes);
+          const hasExtra = extraParts.length > 0;
+
+          // Unified vertical text positions
+          // Three possible rows: name · years · extra
+          // Anchor everything around centre (y=0), spacing 14px per row
+          const rows = (yr ? 1 : 0) + (hasExtra ? 1 : 0); // rows below name
+          const nameY =
+            rows === 2 ? -14 : rows === 1 ? -7 : d.data.genId ? 6 : 0;
+          const yearsY = rows === 2 ? 0 : 7;
+          const extraY = rows === 2 ? 14 : yr ? 21 : 7;
 
           // Click to toggle
           if (!leaf && hasKids) {
@@ -482,6 +550,25 @@
                 nd._children = null;
               }
               update(nd);
+              // Pan so the clicked node stays visible with its new children
+              if (nd.children) {
+                const svgEl = svg.node();
+                const svgW =
+                  svgEl.clientWidth || svgEl.getBoundingClientRect().width;
+                const svgH =
+                  svgEl.clientHeight || svgEl.getBoundingClientRect().height;
+                const currentTransform = d3.zoomTransform(svgEl);
+                const k = currentTransform.k;
+                const tx = svgW / 2 - k * nd.x;
+                const ty = svgH * 0.25 - k * nd.y;
+                svg
+                  .transition()
+                  .duration(ANIM_MS)
+                  .call(
+                    zoom.transform,
+                    d3.zoomIdentity.translate(tx, ty).scale(k),
+                  );
+              }
             });
           }
 
@@ -571,6 +658,19 @@
                 .text(yr);
             }
 
+            // Extra line (spouses / notes)
+            if (hasExtra) {
+              g.append("text")
+                .attr("x", 0)
+                .attr("y", extraY)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("fill", COL.mutedText)
+                .attr("font-size", "8px")
+                .attr("font-family", "Georgia, serif")
+                .text(truncate(extraParts[0], 28));
+            }
+
             // Expand/collapse triangle indicator
             if (hasKids) {
               g.append("text")
@@ -585,17 +685,42 @@
                 .text(d.children ? "▼" : "▶");
             }
           } else {
-            // Leaf: name only, muted
+            // Leaf: same layout as non-leaf but muted style
             g.append("text")
               .attr("class", "node-name")
               .attr("x", 0)
-              .attr("y", 1)
+              .attr("y", nameY)
               .attr("text-anchor", "middle")
               .attr("dominant-baseline", "middle")
               .attr("fill", COL.leafName)
               .attr("font-size", "10px")
               .attr("font-family", "Georgia, serif")
               .text(truncate(d.data.name, MAX_NAME_LEN));
+
+            if (yr) {
+              g.append("text")
+                .attr("class", "node-years")
+                .attr("x", 0)
+                .attr("y", yearsY)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("fill", COL.mutedText)
+                .attr("font-size", "9px")
+                .attr("font-family", "Georgia, serif")
+                .text(yr);
+            }
+
+            if (hasExtra) {
+              g.append("text")
+                .attr("x", 0)
+                .attr("y", extraY)
+                .attr("text-anchor", "middle")
+                .attr("dominant-baseline", "middle")
+                .attr("fill", COL.mutedText)
+                .attr("font-size", "8px")
+                .attr("font-family", "Georgia, serif")
+                .text(truncate(extraParts[0], 28));
+            }
           }
         });
 
@@ -613,6 +738,25 @@
         nodeUpdate.each(function (d) {
           const g = d3.select(this);
           g.select(".expand-indicator").text(d.children ? "▼" : "▶");
+          // Re-apply highlight if this is the target node
+          const isHighlighted =
+            _highlightedNavId && d.data._navId === _highlightedNavId;
+          const leaf = isLeaf(d);
+          g.select("rect.node-rect")
+            .classed("highlighted", isHighlighted)
+            .attr(
+              "fill",
+              isHighlighted
+                ? COL.highlight
+                : leaf
+                  ? COL.leafFill
+                  : COL.nodeFill,
+            )
+            .attr(
+              "stroke",
+              isHighlighted ? COL.highlightStroke : COL.nodeBorder,
+            )
+            .attr("stroke-width", isHighlighted ? 2 : 1);
         });
 
         // EXIT
@@ -633,84 +777,97 @@
       }
 
       // ── Search ────────────────────────────────────────────────────────────────
-      let searchDebounce = null;
+      (function () {
+        const input = document.getElementById("search-input");
+        const box = document.getElementById("search-results");
 
-      document
-        .getElementById("search-input")
-        .addEventListener("input", function () {
-          clearTimeout(searchDebounce);
-          searchDebounce = setTimeout(() => doSearch(this.value.trim()), 180);
-        });
-
-      function doSearch(q) {
-        const countEl = document.getElementById("search-count");
-
-        // Remove previous highlights
-        gNodes
-          .selectAll("rect.node-rect")
-          .classed("highlighted", false)
-          .attr("fill", function () {
-            const d = d3.select(this.parentNode).datum();
-            return isLeaf(d) ? COL.leafFill : COL.nodeFill;
-          })
-          .attr("stroke", COL.nodeBorder)
-          .attr("stroke-width", 1);
-
-        if (!q || q.length < 2) {
-          countEl.textContent = "";
-          return;
-        }
-
-        const lq = q.toLowerCase();
-        const hits = searchIndex.filter(
-          (item) => item.name && item.name.toLowerCase().includes(lq),
-        );
-
-        if (!hits.length) {
-          countEl.textContent = "Geen resultaten";
-          return;
-        }
-
-        countEl.textContent =
-          hits.length + " resultaat" + (hits.length !== 1 ? "en" : "");
-
-        // Expand the path to the first hit, then render
-        const first = hits[0];
-        let firstNode = null;
-        const targetGenId =
-          first.genId ||
-          (first.ancestors && first.ancestors[first.ancestors.length - 1]) ||
-          null;
-        if (targetGenId) {
-          firstNode = expandPathTo(targetGenId);
-        }
-        update(root);
-
-        // Highlight all matching nodes (by genId for named nodes, by name for leaves)
-        const hitNames = new Set(hits.map((h) => h.name));
-        const hitGenIds = new Set(
-          hits.filter((h) => h.genId).map((h) => h.genId),
-        );
-        gNodes.selectAll("g.node").each(function (d) {
-          const match =
-            (d.data.genId && hitGenIds.has(d.data.genId)) ||
-            (!d.data.genId && hitNames.has(d.data.name));
-          if (match) {
-            d3.select(this)
-              .select("rect.node-rect")
-              .classed("highlighted", true)
-              .attr("fill", COL.highlight)
-              .attr("stroke", COL.highlightStroke)
-              .attr("stroke-width", 2);
+        input.addEventListener("input", () => {
+          const q = input.value.trim().toLowerCase();
+          box.innerHTML = "";
+          if (q.length < 2) {
+            box.hidden = true;
+            return;
           }
+
+          const hits = searchIndex
+            .filter(
+              (p) =>
+                (p.name && p.name.toLowerCase().includes(q)) ||
+                (p.born && p.born.toLowerCase().includes(q)) ||
+                (p.died && p.died.toLowerCase().includes(q)),
+            )
+            .slice(0, 40);
+
+          if (!hits.length) {
+            box.innerHTML =
+              '<div class="empty">Geen resultaten gevonden.</div>';
+          } else {
+            hits.forEach((p) => {
+              const div = document.createElement("div");
+              div.className = "sr-item";
+              div.tabIndex = 0;
+              const navId = p.navId;
+              const displayAncestor =
+                p.ancestors && p.ancestors[p.ancestors.length - 1];
+              div.innerHTML =
+                `<span class="sr-name">${p.name}</span>` +
+                (p.genId
+                  ? ` <span class="sr-dates">[${p.genId}]</span>`
+                  : displayAncestor && !displayAncestor.startsWith("~")
+                    ? ` <span class="sr-dates">↳ ${displayAncestor}</span>`
+                    : "") +
+                (p.born || p.died
+                  ? ` <span class="sr-dates">${[p.born, p.died].filter(Boolean).join(" – ")}</span>`
+                  : "");
+              const navigate = () => {
+                box.hidden = true;
+                input.value = "";
+                if (!navId) return;
+                const targetNode = expandPathTo(navId);
+                update(root);
+                if (targetNode) panToNode(targetNode);
+              };
+              div.addEventListener("click", navigate);
+              div.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") navigate();
+              });
+              box.appendChild(div);
+            });
+          }
+          box.hidden = false;
         });
 
-        if (firstNode) {
-          panToNode(firstNode);
-        }
-      }
+        document.addEventListener("click", (e) => {
+          if (!document.getElementById("search-wrap").contains(e.target))
+            box.hidden = true;
+        });
+      })();
 
       function panToNode(d) {
+        // Clear previous highlight
+        _highlightedNavId = d.data._navId;
+        // Sync highlight colours on all currently rendered nodes
+        gNodes.selectAll("g.node").each(function (nd) {
+          const isHighlighted = nd.data._navId === _highlightedNavId;
+          const leaf = isLeaf(nd);
+          d3.select(this)
+            .select("rect.node-rect")
+            .classed("highlighted", isHighlighted)
+            .attr(
+              "fill",
+              isHighlighted
+                ? COL.highlight
+                : leaf
+                  ? COL.leafFill
+                  : COL.nodeFill,
+            )
+            .attr(
+              "stroke",
+              isHighlighted ? COL.highlightStroke : COL.nodeBorder,
+            )
+            .attr("stroke-width", isHighlighted ? 2 : 1);
+        });
+
         const svgEl = svg.node();
         const svgW = svgEl.clientWidth || svgEl.getBoundingClientRect().width;
         const svgH = svgEl.clientHeight || svgEl.getBoundingClientRect().height;
@@ -779,6 +936,9 @@
             " generaties · " +
             data.meta.totalPersonsWithOwnEntry +
             " personen";
+
+          // Assign navigation IDs to every node
+          assignNavIds(data.tree);
 
           // Build D3 hierarchy
           root = d3.hierarchy(data.tree, (d) => d.children);

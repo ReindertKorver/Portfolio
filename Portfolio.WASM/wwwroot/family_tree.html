@@ -259,10 +259,26 @@
         left: 0.5rem;
         color: #c4a97a;
       }
+      .leaf-name {
+        color: #4a3a2a;
+      }
+      .leaf-details {
+        display: block;
+        font-size: 0.78rem;
+        color: #a09080;
+        padding-left: 0.2rem;
+        margin-top: 0.1rem;
+      }
 
       /* highlighted node from search */
       .highlight > summary {
         background: #ffe08a !important;
+      }
+      li.highlight {
+        background: #ffe08a;
+        border-radius: 4px;
+        padding: 2px 6px 2px 1.3rem;
+        font-weight: bold;
       }
 
       /* ── Collapse/Expand button ──────────────────────────────── */
@@ -330,12 +346,20 @@
         return parts.length ? parts.join(" – ") : "";
       }
 
+      // ── Assign navigation IDs to every node ─────────────────────────────────
+      let _autoNavCounter = 0;
+      function assignNavIds(node) {
+        node._navId = node.genId || "~" + ++_autoNavCounter;
+        (node.children || []).forEach(assignNavIds);
+      }
+
       // ── Build tree DOM ────────────────────────────────────────────────────────
+      let _leafCounter = 0;
       function buildTree(node, container, depth) {
         depth = depth || 0;
 
         const details = document.createElement("details");
-        details.dataset.genId = node.genId || "";
+        details.dataset.genId = node._navId;
         // Open root + first two levels by default
         if (depth < 2) details.open = true;
 
@@ -390,8 +414,23 @@
             } else {
               // leaf
               li.className = "leaf";
+              li.id = "leaf-" + _leafCounter++;
+              li.dataset.name = child.name.toLowerCase();
               const y2 = years(child);
-              li.textContent = child.name + (y2 ? "  (" + y2 + ")" : "");
+              let leafHtml = `<span class="leaf-name">${child.name}</span>`;
+              if (y2) leafHtml += ` <span class="person-years">(${y2})</span>`;
+              const details2 = [];
+              if (child.spouses && child.spouses.length)
+                details2.push(
+                  `<span class="label">Huwt:</span> ${child.spouses.join(", ")}`,
+                );
+              if (child.notes)
+                details2.push(
+                  `<span class="label">Noot:</span> ${child.notes}`,
+                );
+              if (details2.length)
+                leafHtml += `<span class="leaf-details">${details2.join(" · ")}</span>`;
+              li.innerHTML = leafHtml;
             }
             ul.appendChild(li);
           });
@@ -402,18 +441,28 @@
       }
 
       // ── Full search index (tree walk, includes leaves) ──────────────────────
-      function buildFullIndex(node, parentGenId, result) {
+      function buildFullIndex(node, parentNavId, result) {
         result = result || [];
-        parentGenId = parentGenId || null;
+        parentNavId = parentNavId || null;
+        // For true leaf nodes (no children), find the DOM element by data-name for direct scroll
+        let leafId = null;
+        if (!(node.children && node.children.length)) {
+          const el = document.querySelector(
+            `li[data-name="${node.name.toLowerCase()}"]`,
+          );
+          if (el) leafId = el.id;
+        }
         result.push({
           name: node.name,
           born: node.born || null,
           died: node.died || null,
           genId: node.genId || null,
-          parentGenId: parentGenId,
+          navId: node._navId,
+          parentNavId: parentNavId,
+          leafId: leafId,
         });
         (node.children || []).forEach(function (child) {
-          buildFullIndex(child, node.genId || parentGenId, result);
+          buildFullIndex(child, node._navId, result);
         });
         return result;
       }
@@ -431,14 +480,27 @@
             return;
           }
 
-          const hits = index
-            .filter(
-              (p) =>
-                p.name.toLowerCase().includes(q) ||
-                (p.born && p.born.toLowerCase().includes(q)) ||
-                (p.died && p.died.toLowerCase().includes(q)),
+          const scoreHit = (p) => {
+            const n = p.name.toLowerCase();
+            if (n === q) return 4;
+            if (n.startsWith(q)) return 3;
+            if (n.split(/\s+/).some((w) => w.startsWith(q))) return 2;
+            if (n.includes(q)) return 1;
+            if (
+              (p.born && p.born.toLowerCase().includes(q)) ||
+              (p.died && p.died.toLowerCase().includes(q))
             )
-            .slice(0, 40);
+              return 1;
+            return 0;
+          };
+          const hits = index
+            .map((p) => ({ p, score: scoreHit(p) }))
+            .filter(({ score }) => score > 0)
+            .sort(
+              (a, b) => b.score - a.score || a.p.name.localeCompare(b.p.name),
+            )
+            .slice(0, 60)
+            .map(({ p }) => p);
 
           if (!hits.length) {
             box.innerHTML =
@@ -448,21 +510,25 @@
               const div = document.createElement("div");
               div.className = "sr-item";
               div.tabIndex = 0;
-              const navId = p.genId || p.parentGenId;
+              const navId = p.navId;
               div.innerHTML =
                 `<span class="sr-name">${p.name}</span>` +
                 (p.genId
                   ? ` <span class="sr-dates">[${p.genId}]</span>`
-                  : p.parentGenId
-                    ? ` <span class="sr-dates">↳ ${p.parentGenId}</span>`
+                  : p.parentNavId && !p.leafId
+                    ? ` <span class="sr-dates">↳ ${p.parentNavId}</span>`
                     : "") +
                 (p.born || p.died
                   ? ` <span class="sr-dates">${[p.born, p.died].filter(Boolean).join(" – ")}</span>`
                   : "");
-              div.addEventListener("click", () => focusNode(navId, input, box));
+              div.addEventListener("click", () =>
+                focusNode(navId, input, box, p.leafId || null),
+              );
               div.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") focusNode(navId, input, box);
+                if (e.key === "Enter")
+                  focusNode(navId, input, box, p.leafId || null);
               });
+
               box.appendChild(div);
             });
           }
@@ -475,8 +541,28 @@
         });
       }
 
-      function focusNode(genId, input, box) {
+      function focusNode(genId, input, box, leafId) {
         box.hidden = true;
+        // If it's a leaf node with a direct DOM id, navigate straight to it
+        if (leafId) {
+          document
+            .querySelectorAll(".highlight")
+            .forEach((el) => el.classList.remove("highlight"));
+          const leaf = document.getElementById(leafId);
+          if (leaf) {
+            // Open all ancestor details
+            let anc = leaf.parentElement;
+            while (anc) {
+              if (anc.tagName === "DETAILS") anc.open = true;
+              anc = anc.parentElement;
+            }
+            leaf.classList.add("highlight");
+            leaf.scrollIntoView({ behavior: "smooth", block: "center" });
+            if (input) input.value = "";
+            box.hidden = true;
+            return;
+          }
+        }
         if (!genId) return;
 
         // Remove previous highlights
@@ -532,6 +618,7 @@
           // Tree
           const wrap = document.getElementById("tree-wrap");
           wrap.innerHTML = "";
+          assignNavIds(data.tree);
           buildTree(data.tree, wrap, 0);
 
           // Search — use full tree index so leaves (no genId) are also findable
