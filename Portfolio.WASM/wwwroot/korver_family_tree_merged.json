@@ -2909,7 +2909,7 @@
                                                       {
                                                         "genId": null,
                                                         "name": "JAN JACOBUS KORVER",
-                                                        "born": "4 september 1951",
+                                                        "born": "Bodegraven 4 september 1951",
                                                         "died": null,
                                                         "notes": "JAN JACOBUS KORVER, geboren 4 september 1951",
                                                         "children": []
@@ -2919,32 +2919,36 @@
                                                         "name": "JACOBUS WILLEM KORVER",
                                                         "born": "29 augustus 1956",
                                                         "died": null,
-                                                        "notes": "JACOBUS WILLEM KORVER, geboren 29 augustus 1956, huwt 25 april 1980 CORNELIA ZAAL, geboren Zwammerdam 12 december 1957 uit dit huwelijk werden 3 kinderen geboren:",
-                                                        "children": []
-                                                      },
-                                                      {
-                                                        "genId": null,
-                                                        "name": "JOLANDA KORVER",
-                                                        "born": "Bodegraven 20 april 1983",
-                                                        "died": null,
-                                                        "notes": "JOLANDA KORVER, geboren Bodegraven 20 april 1983",
-                                                        "children": []
-                                                      },
-                                                      {
-                                                        "genId": null,
-                                                        "name": "DANNY KORVER",
-                                                        "born": "Bodegraven 6 november 1985",
-                                                        "died": null,
-                                                        "notes": "DANNY KORVER, geboren Bodegraven 6 november 1985",
-                                                        "children": []
-                                                      },
-                                                      {
-                                                        "genId": null,
-                                                        "name": "WILCO KORVER",
-                                                        "born": "Bodegraven 22 juli 1990",
-                                                        "died": null,
-                                                        "notes": "WILCO KORVER, geboren Bodegraven 22 juli 1990",
-                                                        "children": []
+                                                        "notes": "geboren Gouda; huwt 25 april 1980 CORNELIA ZAAL, geboren Zwammerdam 12 december 1957",
+                                                        "children": [
+                                                          {
+                                                            "genId": null,
+                                                            "name": "JOLANDA KORVER",
+                                                            "born": "Bodegraven 20 april 1983",
+                                                            "died": null,
+                                                            "notes": "JOLANDA KORVER, geboren Bodegraven 20 april 1983",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "genId": null,
+                                                            "name": "DANNY KORVER",
+                                                            "born": "Bodegraven 6 november 1985",
+                                                            "died": null,
+                                                            "notes": "DANNY KORVER, geboren Bodegraven 6 november 1985",
+                                                            "children": []
+                                                          },
+                                                          {
+                                                            "genId": null,
+                                                            "name": "WILCO KORVER",
+                                                            "born": "Bodegraven 22 juli 1990",
+                                                            "died": null,
+                                                            "notes": "WILCO KORVER, geboren Bodegraven 22 juli 1990",
+                                                            "children": []
+                                                          }
+                                                        ],
+                                                        "spouses": [
+                                                          "CORNELIA ZAAL"
+                                                        ]
                                                       }
                                                     ]
                                                   },
@@ -3021,7 +3025,7 @@
                                                     ],
                                                     "parentId": "12s",
                                                     "notes": "zoon van 12s",
-                                                    "rawDetails": "CORNELIS KORVER, geboren Papekop 14 juli 1925, verder niets bekend.",
+                                                    "rawDetails": "CORNELIS KORVER, geboren Papekop 14 juli 1925, overleden Moerkapelle 2 oktober 2012, huwt SOPHIA VAN DELFT (overleden onbekend), huwt Bodegraven 17 januari 1964 DIRKJE VAN VELDHUIJZEN (overleden onbekend), uit dit huwelijk werd 1 zoon geboren: JACOBUS, geboren Bodegraven 14 augustus 1965, huwt Bodegraven 15 augustus 1989 GEERTJE GRIFFIOEN, geen kinderen.",
                                                     "children": [
                                                       {
                                                         "genId": null,
@@ -3062,15 +3066,18 @@
                                                     ],
                                                     "parentId": "12s",
                                                     "notes": "zoon van 12s",
-                                                    "rawDetails": "KRIJN KORVER, geboren Papekop 26 november 1929, overleden Gorinchem 17 maart 2002 huwt Streefkerk 19 januari 1955 CORNELIA DE JONG, geboren Streefkerk 22 mei 1926, uit dit huwelijk werden 6 kinderen geboren, 1/2 te Groot Amers, 3/6 te Streefkerk:",
+                                                    "rawDetails": "KRIJN KORVER, geboren Papekop 26 november 1929, overleden Gorinchem 17 maart 2002 huwt Streefkerk 19 januari 1955 CORNELIA DE JONG, geboren Streefkerk 22 mei 1926, overleden Groot-Ammers 6 april 2005, uit dit huwelijk werden 6 kinderen geboren, 1/2 te Groot-Ammers, 3/6 te Streefkerk:",
                                                     "children": [
                                                       {
                                                         "genId": null,
                                                         "name": "AALTJE KORVER",
                                                         "born": "26 oktober 1955",
                                                         "died": null,
-                                                        "notes": "AALTJE KORVER, geboren 26 oktober 1955,",
-                                                        "children": []
+                                                        "notes": "AALTJE KORVER, geboren 26 oktober 1955, huwt Streefkerk 11 augustus 1978 MARINUS FERDINANDUS WILLEM RIJKSE",
+                                                        "children": [],
+                                                        "spouses": [
+                                                          "MARINUS FERDINANDUS WILLEM RIJKSE"
+                                                        ]
                                                       },
                                                       {
                                                         "genId": "14..",
@@ -3203,8 +3210,11 @@
                                                         "name": "CORNELIA KORVER",
                                                         "born": "2 september 1964",
                                                         "died": null,
-                                                        "notes": "CORNELIA KORVER, geboren 2 september 1964, huwt WAAGENBORG",
-                                                        "children": []
+                                                        "notes": "CORNELIA KORVER, geboren 2 september 1964, huwt Streefkerk 10 mei 1985 MARTINUS HENDRIKUS WAAIJENBORG",
+                                                        "children": [],
+                                                        "spouses": [
+                                                          "MARTINUS HENDRIKUS WAAIJENBORG"
+                                                        ]
                                                       }
                                                     ]
                                                   },
@@ -3218,7 +3228,7 @@
                                                     ],
                                                     "parentId": "12s",
                                                     "notes": "zoon van 12s",
-                                                    "rawDetails": "KLAAS KORVER, geboren Papekop 8 maart 1933, overleden Utrecht 12 mei 2004 huwt 30 augustus 1972 CORNELIA HENDRIKA DEMERIS VERHEUL, geboren Lange Ruige Weide 26 juli 1924 uit dit huwelijk werden geen kinderen geboren.",
+                                                    "rawDetails": "KLAAS KORVER, geboren Papekop 8 maart 1933, overleden Utrecht 12 mei 2004 huwt 30 augustus 1972 CORNELIA HENDRIKA DEMERIS VERHEUL, geboren Lange Ruige Weide 26 juli 1924, overleden Bodegraven 8 oktober 2014 uit dit huwelijk werden geen kinderen geboren.",
                                                     "children": []
                                                   }
                                                 ]
